@@ -283,7 +283,7 @@ export default {
       return `${m} : ${s}`
     },
     timevalue () {
-      const p = this.timeleft / 10 * 100
+      const p = this.timeleft / 1500 * 100
       return p
     },
     finished () {
