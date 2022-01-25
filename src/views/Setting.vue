@@ -9,7 +9,12 @@
         hr
         .alert
           b-form-group(v-for="item in items")
-            b-form-radio(name="work" :value="item" @change="selectWork") {{ item.name }}
+            b-form-radio(name="work" :value="item" @change="selectWork" ) {{ item.name }}
+      .play
+        img(src="../assets/img/play.png")
+        h3 the first thing
+        h4 10:20
+        b-progress.mb-3(value=75 height="5px")
       b-col(cols="6")
         .d-flex
           img(src="../assets/img/tomato.png")
@@ -23,7 +28,7 @@
 
 <style lang="scss">
 #setting{
-  width: 90%;
+  width: 100%;
 }
 h2{
   color: #D9674E;
@@ -82,6 +87,38 @@ hr{
   position: absolute;
   bottom: -200px;
   right: 50px;
+}
+.play{
+  bottom: 10%;
+  width: 500px;
+  height: 100px;
+  position: absolute;
+  background-color: #FFFFFF80;
+  color: #333333;
+  img{
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+  }
+  h3{
+    position: absolute;
+    left: 100px;
+    top: 20px;
+  }
+  h4{
+    position: absolute;
+    right: 10px;
+    top: 20px;
+  }
+  .progress{
+    width: 79%;
+    left: 100px;
+    bottom: 20px;
+    position: absolute;
+  }
 }
 </style>
 

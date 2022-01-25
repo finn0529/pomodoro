@@ -10,8 +10,7 @@ const routes = [
     name: 'Home',
     component: Home,
     meta: {
-      title: '蕃茄鐘',
-      keepAlive: true
+      title: '蕃茄鐘'
     }
   },
   {

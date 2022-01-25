@@ -20,15 +20,23 @@
             b-form-input#newinput(v-model="newinput" placeholder="Add A New Mission" @keydown.enter="additem")
           b-btn(variant="danger" @click="additem")
             img(src="../assets/img/plus.png", alt="alt")
+        .recentlyComplete
+          p Recently completed--
+          .d-flex
+            img(src="../assets/img/checked.png")
+            p {{ finishedText }}
+          p.more More
       b-col(cols="6")
         .time
           img(src="../assets/img/tomatored.png")
           h1 {{ timetext }}
-        b-progress.mb-3(value=75 height="5px" variant="danger")
+        b-progress.mb-3(:value="timevalue" height="5px")
         .start
-          b-btn(variant="danger")
+          b-btn(variant="danger" v-if="status!==1" @click="start")
             img(src="../assets/img/play.png")
-          b-btn(variant="danger")
+          b-btn(variant="danger" v-else @click="pause")
+            img(src="../assets/img/stop.png")
+          b-btn(variant="danger" v-if="current.length>0" @click="finish()")
             img(src="../assets/img/cancle.png")
 </template>
 
@@ -52,7 +60,7 @@
 .being{
   background: white;
   width: 110%;
-  height: 20%;
+  height:100px;
   border-radius: 50px;
   position: relative;
   img{
@@ -66,7 +74,8 @@
   }
 }
 .outlist{
-  height: 50%;
+  height: 220px;
+  line-height: 30px;
   overflow: auto;
   #list{
     thead{
@@ -183,11 +192,6 @@
     background: none;
     border: none;
     border-radius: 50%;
-    &:focus{
-      background: none;
-      border: none;
-      outline: none;
-    }
     &:hover{
       background: none;
     }
@@ -219,6 +223,31 @@
     }
   }
 }
+.progress-bar{
+  background-color: #fdb270 !important;
+}
+.recentlyComplete{
+  color: #707070;
+  position: relative;
+  margin-top: 50px;
+  width: 100%;
+  height: 100px;
+  background-color: #FFFFFF80;
+  align-items: center;
+  img{
+    width: 30px;
+    height: 30px;
+    margin-right: 20px;
+    margin-left: 20px;
+  }
+  .more{
+    position: absolute;
+    right: 10px;
+    top: 10px;
+    color: #858C51;
+    cursor: pointer;
+  }
+}
 </style>
 
 <script>
@@ -230,7 +259,9 @@ export default {
         { key: 'select' },
         { key: 'name' },
         { key: 'action' }
-      ]
+      ],
+      status: 0,
+      timer: 0
     }
   },
   computed: {
@@ -250,6 +281,16 @@ export default {
       const m = Math.floor(this.timeleft / 60).toString().padStart(2, '0')
       const s = Math.floor(this.timeleft % 60).toString().padStart(2, '0')
       return `${m} : ${s}`
+    },
+    timevalue () {
+      const p = this.timeleft / 10 * 100
+      return p
+    },
+    finished () {
+      return this.$store.state.finished
+    },
+    finishedText () {
+      return this.finished.length > 0 ? this.finished[this.finished.length - 1] : '未完成事項'
     }
   },
   methods: {
@@ -257,6 +298,37 @@ export default {
       if (this.newinput.length > 0) {
         this.$store.commit('additem', this.newinput)
         this.newinput = ''
+      }
+    },
+    start () {
+      if (this.status === 0 && this.items.length > 0) {
+        this.$store.commit('start')
+      }
+      if (this.current.length) {
+        this.status = 1
+        this.timer = setInterval(() => {
+          this.$store.commit('countdown')
+          if (this.timeleft <= -1) {
+            this.finish(false)
+          }
+        }, 1000)
+      }
+    },
+    pause () {
+      this.status = 2
+      clearInterval(this.timer)
+    },
+    finish (skip) {
+      clearInterval(this.timer)
+      this.status = 0
+      this.$store.commit('finish')
+      if (!skip) {
+        const audio = new Audio()
+        audio.src = require('@/assets/' + this.$store.state.workSound)
+        audio.play()
+      }
+      if (this.items.length > 0) {
+        this.start()
       }
     }
   }
