@@ -175,7 +175,7 @@
   }
   h1{
     color: #FFF;
-    font-size: 10vh;
+    font-size:10vh;
     position: absolute;
     left: 50%;
     bottom: 20%;
